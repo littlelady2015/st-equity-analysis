@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f3ee">
+  <title>股析 | 股票基本面解读</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f2f3ee;
+      --surface: #fff;
+      --ink: #20251f;
+      --muted: #73796f;
+      --line: #dfe2d9;
+      --green: #2e6448;
+      --green-pale: #e6eee6;
+      --orange: #bc6542;
+      --orange-pale: #f5e9e2;
+      --blue: #47717a;
+      --blue-pale: #e6eff0;
+      --yellow: #e7c55a;
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --sans: "Avenir Next", Avenir, "Segoe UI", "Noto Sans CJK SC", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .shell { max-width: 1440px; margin: auto; padding: 0 42px 44px; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 66px; border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 750; letter-spacing: .3px; }
+    .brand-mark { width: 25px; height: 25px; display: grid; place-items: center; background: var(--green); color: white; border-radius: 7px; font-family: var(--serif); font-size: 17px; }
+    .topnote { color: var(--muted); font-size: 12px; }
+    main { padding-top: 37px; }
+    .intro { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 25px; }
+    .eyebrow { color: var(--green); text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700; font-size: 10px; }
+    h1 { margin: 5px 0 0; font-family: var(--serif); font-size: 36px; line-height: 1.12; font-weight: 500; letter-spacing: 0; }
+    .intro-copy { color: var(--muted); margin: 8px 0 0; font-size: 13px; }
+    .data-tag { padding: 8px 11px; border: 1px solid var(--line); color: var(--muted); border-radius: 4px; font-size: 11px; white-space: nowrap; }
+    .layout { display: grid; grid-template-columns: minmax(300px, 360px) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+    .form-panel { padding: 21px 22px 18px; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 17px; }
+    h2 { font-size: 15px; margin: 0; font-weight: 700; }
+    .subtle { color: var(--muted); font-size: 11px; }
+    .preset { display: flex; gap: 6px; margin-bottom: 18px; }
+    .preset button { background: transparent; border: 1px solid var(--line); border-radius: 3px; padding: 5px 9px; font-size: 11px; cursor: pointer; }
+    .preset button:hover, .preset button:focus-visible { border-color: var(--green); color: var(--green); outline: none; }
+    .company-field { margin-bottom: 19px; }
+    label { display: block; color: #555d53; font-size: 11px; margin-bottom: 6px; }
+    input {
+      width: 100%; height: 37px; border: 1px solid var(--line); border-radius: 3px;
+      padding: 0 10px; background: #fcfcfa; color: var(--ink); outline: none;
+    }
+    input:focus { border-color: var(--green); box-shadow: 0 0 0 2px #2e644818; }
+    input[type="number"] { font-variant-numeric: tabular-nums; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 13px; row-gap: 13px; }
+    .field-unit { position: relative; }
+    .field-unit input { padding-right: 35px; }
+    .unit { position: absolute; right: 10px; top: 8px; color: #92978d; font-size: 11px; pointer-events: none; }
+    .section-label { grid-column: 1 / -1; display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 10px; letter-spacing: .6px; margin-top: 3px; }
+    .section-label::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+    .field-note { color: #989d94; font-size: 10px; margin-top: 4px; }
+    .form-foot { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 12px; color: var(--muted); font-size: 10px; }
+    .results { display: grid; gap: 14px; }
+    .overview { display: grid; grid-template-columns: minmax(220px, .82fr) minmax(0, 1.5fr); min-height: 214px; overflow: hidden; }
+    .score-block { padding: 22px 23px; background: var(--green); color: white; display: flex; flex-direction: column; justify-content: space-between; }
+    .score-label { font-size: 11px; color: #d9e7dc; }
+    .score-row { display: flex; align-items: baseline; gap: 7px; margin-top: 9px; }
+    .score { font-family: var(--serif); font-size: 72px; line-height: .95; letter-spacing: 0; }
+    .score-denom { font-family: var(--serif); font-size: 20px; color: #c5d8c9; }
+    .score-band { border-top: 1px solid #ffffff44; padding-top: 11px; margin-top: 18px; font-size: 12px; display: flex; justify-content: space-between; }
+    .overview-text { padding: 22px 24px; display: flex; flex-direction: column; justify-content: space-between; }
+    .company-name { font-family: var(--serif); font-size: 24px; line-height: 1.2; }
+    .company-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .summary { font-size: 13px; line-height: 1.8; margin: 17px 0; max-width: 620px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { border-radius: 2px; padding: 4px 8px; font-size: 10px; }
+    .tag.good { color: var(--green); background: var(--green-pale); }
+    .tag.warn { color: #9e5337; background: var(--orange-pale); }
+    .tag.neutral { color: var(--blue); background: var(--blue-pale); }
+    .score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .score-card { padding: 17px 18px 14px; border-right: 1px solid var(--line); }
+    .score-card:last-child { border-right: 0; }
+    .score-card-top { display: flex; justify-content: space-between; align-items: center; }
+    .score-card-title { font-size: 12px; font-weight: 650; }
+    .score-card-value { font-family: var(--serif); font-size: 25px; }
+    .meter { height: 4px; background: #edf0e9; margin: 10px 0 9px; overflow: hidden; border-radius: 3px; }
+    .meter-fill { height: 100%; width: 0; background: var(--green); transition: width .35s ease; }
+    .score-card:nth-child(2) .meter-fill { background: var(--blue); }
+    .score-card:nth-child(3) .meter-fill { background: var(--orange); }
+    .score-detail { color: var(--muted); font-size: 10px; }
+    .lower-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 14px; }
+    .insights-panel, .method-panel { padding: 18px 20px; }
+    .insight-list { margin-top: 13px; display: grid; gap: 0; }
+    .insight { display: grid; grid-template-columns: 8px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid #edf0e9; }
+    .insight-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-top: 6px; }
+    .insight.risk .insight-dot { background: var(--orange); }
+    .insight-title { font-size: 11px; font-weight: 700; }
+    .insight-copy { color: var(--muted); font-size: 11px; line-height: 1.6; margin-top: 2px; }
+    .method-panel { background: #e8ebe4; border-color: #e8ebe4; }
+    .method-row { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid #d5dad1; padding: 9px 0; font-size: 10px; }
+    .method-row:first-of-type { margin-top: 11px; }
+    .method-row span:last-child { color: var(--muted); text-align: right; }
+    .disclaimer { color: var(--muted); font-size: 10px; line-height: 1.7; margin: 10px 1px 0; }
+    footer { display: flex; justify-content: space-between; gap: 15px; border-top: 1px solid var(--line); margin-top: 25px; padding-top: 12px; color: #858b81; font-size: 10px; }
+    @media (max-width: 900px) {
+      .shell { padding: 0 22px 32px; }
+      .layout { grid-template-columns: 1fr; }
+      .form-panel { order: 2; }
+      .results { order: 1; }
+    }
+    @media (max-width: 620px) {
+      .shell { padding: 0 14px 26px; }
+      .topnote { font-size: 10px; }
+      main { padding-top: 25px; }
+      .intro { align-items: start; flex-direction: column; gap: 12px; }
+      h1 { font-size: 31px; }
+      .overview { grid-template-columns: 1fr; }
+      .score-block { min-height: 156px; }
+      .score { font-size: 60px; }
+      .overview-text { min-height: 170px; padding: 18px; }
+      .score-grid { grid-template-columns: 1fr; }
+      .score-card { border-right: 0; border-bottom: 1px solid var(--line); }
+      .score-card:last-child { border-bottom: 0; }
+      .lower-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 3px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">析</span><span>股析 <span style="font-weight:400;color:#73796f">/ FUNDAMENTALS</span></span></div>
+      <div class="topnote">独立研究工具 <span aria-hidden="true">·</span> 数据仅保留在本地页面</div>
+    </header>
+    <main>
+      <div class="intro">
+        <div>
+          <div class="eyebrow">Company research / 01</div>
+          <h1>把数字，读成线索。</h1>
+          <p class="intro-copy">输入关键财务指标，快速梳理一家公司的盈利质量、财务健康与估值。</p>
+        </div>
+        <div class="data-tag">手动输入数据 <span aria-hidden="true">/</span> 非实时行情</div>
+      </div>
+
+      <div class="layout">
+        <section class="panel form-panel" aria-labelledby="input-heading">
+          <div class="panel-head"><h2 id="input-heading">公司与指标</h2><span class="subtle">可编辑</span></div>
+          <div class="preset" aria-label="示例数据">
+            <button type="button" data-preset="steady">稳健样例</button>
+            <button type="button" data-preset="growth">成长样例</button>
+            <button type="button" data-preset="risk">高风险样例</button>
+          </div>
+          <div class="company-field">
+            <label for="company">公司名称 / 代码</label>
+            <input id="company" type="text" value="青山制造 · 600000" autocomplete="off">
+          </div>
+          <div class="field-grid">
+            <div class="section-label">估值</div>
+            <div><label for="pe">市盈率 · TTM</label><div class="field-unit"><input id="pe" type="number" value="18.6" step="0.1"><span class="unit">倍</span></div></div>
+            <div><label for="pb">市净率</label><div class="field-unit"><input id="pb" type="number" value="2.1" step="0.1"><span class="unit">倍</span></div></div>
+            <div><label for="yield">股息率</label><div class="field-unit"><input id="yield" type="number" value="2.4" step="0.1"><span class="unit">%</span></div></div>
+
+            <div class="section-label">盈利与成长</div>
+            <div><label for="roe">净资产收益率 ROE</label><div class="field-unit"><input id="roe" type="number" value="15.2" step="0.1"><span class="unit">%</span></div></div>
+            <div><label for="margin">毛利率</label><div class="field-unit"><input id="margin" type="number" value="32" step="0.1"><span class="unit">%</span></div></div>
+            <div><label for="revenue">营收同比</label><div class="field-unit"><input id="revenue" type="number" value="12.5" step="0.1"><span class="unit">%</span></div></div>
+            <div><label for="profit">净利润同比</label><div class="field-unit"><input id="profit" type="number" value="16.8" step="0.1"><span class="unit">%</span></div></div>
+
+            <div class="section-label">财务健康</div>
+            <div><label for="debt">资产负债率</label><div class="field-unit"><input id="debt" type="number" value="41" step="0.1"><span class="unit">%</span></div></div>
+            <div><label for="cash">经营现金流 / 净利润</label><div class="field-unit"><input id="cash" type="number" value="1.15" step="0.05"><span class="unit">倍</span></div></div>
+          </div>
+          <div class="form-foot">示例数据仅用于演示。建议填入同一财报期间、同一口径的数据。</div>
+        </section>
+
+        <section class="results" aria-label="分析结果">
+          <div class="panel overview">
+            <div class="score-block">
+              <div><div class="score-label">基本面观察分</div><div class="score-row"><span class="score" id="total-score">76</span><span class="score-denom">/ 100</span></div></div>
+              <div class="score-band"><span id="score-label">整体均衡</span><span>启发式模型</span></div>
+            </div>
+            <div class="overview-text">
+              <div><div class="company-name" id="company-output">青山制造 · 600000</div><div class="company-meta">基于输入指标生成的定量观察，不构成评级</div></div>
+              <p class="summary" id="summary">盈利能力与成长表现较为均衡，经营现金流能够覆盖利润。估值处于中性区间，可结合行业周期与历史水平进一步判断。</p>
+              <div class="tags" id="tags"></div>
+            </div>
+          </div>
+
+          <div class="panel score-grid" aria-label="分项评分">
+            <div class="score-card"><div class="score-card-top"><span class="score-card-title">盈利与成长</span><span class="score-card-value" id="quality-score">76</span></div><div class="meter"><div class="meter-fill" id="quality-meter"></div></div><div class="score-detail">ROE · 增长 · 毛利率</div></div>
+            <div class="score-card"><div class="score-card-top"><span class="score-card-title">财务健康</span><span class="score-card-value" id="health-score">78</span></div><div class="meter"><div class="meter-fill" id="health-meter"></div></div><div class="score-detail">负债水平 · 现金流质量</div></div>
+            <div class="score-card"><div class="score-card-top"><span class="score-card-title">估值观察</span><span class="score-card-value" id="valuation-score">70</span></div><div class="meter"><div class="meter-fill" id="valuation-meter"></div></div><div class="score-detail">PE · PB · 股息率</div></div>
+          </div>
+
+          <div class="lower-grid">
+            <section class="panel insights-panel">
+              <div class="panel-head"><h2>值得留意</h2><span class="subtle">随指标更新</span></div>
+              <div class="insight-list" id="insights"></div>
+            </section>
+            <section class="panel method-panel">
+              <div class="panel-head"><h2>评分怎么来</h2><span class="subtle">满分 100</span></div>
+              <div class="method-row"><span>盈利与成长</span><span>权重 40%</span></div>
+              <div class="method-row"><span>财务健康</span><span>权重 30%</span></div>
+              <div class="method-row"><span>估值观察</span><span>权重 30%</span></div>
+              <p class="disclaimer">评分是基于固定阈值的简化筛查，不考虑行业差异、会计政策、周期与市场预期。请核对原始财报，并结合自身判断。</p>
+            </section>
+          </div>
+          <p class="disclaimer">本工具仅供学习与研究参考，不构成投资建议、买卖信号或收益保证。所有输入和分析均在当前浏览器本地处理，不会上传。</p>
+        </section>
+      </div>
+    </main>
+    <footer><span>股析 · 基本面观察</span><span>手动数据分析 · 非实时 · 非投资建议</span></footer>
+  </div>
+  <script>
+    const presets = {
+      steady: { company: "青山制造 · 600000", pe: 18.6, pb: 2.1, yield: 2.4, roe: 15.2, margin: 32, revenue: 12.5, profit: 16.8, debt: 41, cash: 1.15 },
+      growth: { company: "远望科技 · 688000", pe: 31, pb: 4.8, yield: 0.4, roe: 19, margin: 46, revenue: 38, profit: 42, debt: 28, cash: 0.92 },
+      risk: { company: "宏达实业 · 000999", pe: 46, pb: 6.2, yield: 0, roe: 5, margin: 17, revenue: -8, profit: -24, debt: 72, cash: 0.43 }
+    };
+    const ids = ["pe", "pb", "yield", "roe", "margin", "revenue", "profit", "debt", "cash"];
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+    const value = (id) => Number(document.getElementById(id).value);
+    const scoreGrowth = (growth) => clamp(50 + growth * 1.25, 0, 100);
+    const labelFor = (score) => score >= 75 ? "相对扎实" : score >= 55 ? "整体均衡" : score >= 35 ? "信号偏弱" : "风险较高";
+
+    function analyze() {
+      const pe = value("pe"), pb = value("pb"), dividend = value("yield");
+      const roe = value("roe"), margin = value("margin"), revenue = value("revenue"), profit = value("profit");
+      const debt = value("debt"), cash = value("cash");
+      const quality = Math.round((clamp(roe / 20 * 100, 0, 100) + scoreGrowth(revenue) + scoreGrowth(profit) + clamp(margin / 40 * 100, 0, 100)) / 4);
+      const health = Math.round((clamp((75 - debt) / 55 * 100, 0, 100) + clamp(cash / 1.5 * 100, 0, 100)) / 2);
+      const peScore = pe <= 0 ? 25 : clamp((45 - pe) / 35 * 100, 0, 100);
+      const pbScore = pb <= 0 ? 25 : clamp((8 - pb) / 6.5 * 100, 0, 100);
+      const valuation = Math.round(clamp(peScore * .45 + pbScore * .4 + clamp(dividend / 5 * 100, 0, 100) * .15, 0, 100));
+      const total = Math.round(quality * .4 + health * .3 + valuation * .3);
+      const findings = [];
+      if (roe >= 15) findings.push(["good", "资本回报较好", `ROE 为 ${roe.toFixed(1)}%，高于本工具采用的 15% 观察线。持续性仍需结合多年数据核实。`]);
+      else if (roe < 8) findings.push(["risk", "资本回报偏低", `ROE 为 ${roe.toFixed(1)}%，低于 8% 观察线，需留意盈利效率或资本占用。`]);
+      if (revenue < 0 || profit < 0) findings.push(["risk", "增长出现下滑", `营收同比 ${revenue.toFixed(1)}%，净利润同比 ${profit.toFixed(1)}%，至少一项为负；建议查明是周期波动还是经营变化。`]);
+      else if (profit - revenue > 15) findings.push(["neutral", "利润增速快于营收", `利润增速领先营收 ${ (profit - revenue).toFixed(1) } 个百分点，观察成本变化及非经常性损益影响。`]);
+      if (debt >= 65) findings.push(["risk", "杠杆水平较高", `资产负债率 ${debt.toFixed(1)}%，高于 65% 观察线；不同行业的合理水平差异很大。`]);
+      else if (debt < 35) findings.push(["good", "负债压力相对温和", `资产负债率 ${debt.toFixed(1)}%，处于较低区间；仍建议关注有息负债与到期结构。`]);
+      if (cash < .8) findings.push(["risk", "现金流弱于利润", `经营现金流 / 净利润为 ${cash.toFixed(2)} 倍，低于 0.8 倍观察线，建议核对应收账款和营运资本变化。`]);
+      else if (cash >= 1.1) findings.push(["good", "利润有现金流支撑", `经营现金流 / 净利润为 ${cash.toFixed(2)} 倍，现金转化表现尚可；单期数据可能受季节性影响。`]);
+      if (pe > 35) findings.push(["risk", "市盈率处于高位", `TTM 市盈率为 ${pe.toFixed(1)} 倍，高于 35 倍观察线；需用增长质量和行业同业作对照。`]);
+      else if (pe > 0 && pe < 15) findings.push(["neutral", "市盈率相对较低", `TTM 市盈率为 ${pe.toFixed(1)} 倍，低估值也可能反映周期或基本面风险，需进一步核实。`]);
+      if (!findings.length) findings.push(["neutral", "指标暂未触发明显信号", "当前数值处于中间区间。可进一步对比公司多年趋势、同行水平与经营现金流变化。"]);
+
+      document.getElementById("total-score").textContent = total;
+      document.getElementById("score-label").textContent = labelFor(total);
+      document.getElementById("company-output").textContent = document.getElementById("company").value.trim() || "未命名公司";
+      [["quality", quality], ["health", health], ["valuation", valuation]].forEach(([key, score]) => {
+        document.getElementById(`${key}-score`).textContent = score;
+        document.getElementById(`${key}-meter`).style.width = `${score}%`;
+      });
+      document.getElementById("summary").textContent = total >= 75
+        ? "输入指标呈现出相对扎实的基本面信号。评分不代表未来表现，建议重点核验增长可持续性、估值所隐含的预期以及行业对标。"
+        : total >= 55
+          ? "输入指标整体表现均衡，部分维度有亮点、也有需要核实之处。可结合下方提示，进一步检查盈利质量、负债结构与估值背景。"
+          : "多个输入指标落在偏弱区间，建议先厘清经营变化、现金流与负债压力，再结合行业周期和原始财报进行判断。";
+      document.getElementById("tags").innerHTML = findings.slice(0, 3).map(([kind, title]) => `<span class="tag ${kind}">${title}</span>`).join("");
+      document.getElementById("insights").innerHTML = findings.slice(0, 4).map(([kind, title, copy]) => `<div class="insight ${kind === "risk" ? "risk" : ""}"><span class="insight-dot"></span><div><div class="insight-title">${title}</div><div class="insight-copy">${copy}</div></div></div>`).join("");
+    }
+
+    document.querySelectorAll("input").forEach((input) => input.addEventListener("input", analyze));
+    document.querySelectorAll("[data-preset]").forEach((button) => button.addEventListener("click", () => {
+      const preset = presets[button.dataset.preset];
+      Object.entries(preset).forEach(([id, next]) => { document.getElementById(id).value = next; });
+      analyze();
+    }));
+    analyze();
+  </script>
+</body>
+</html>
